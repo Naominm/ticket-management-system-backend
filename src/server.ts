@@ -1,4 +1,5 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
+import authRoutes from './routes/authRoutes';
 import dotenv from 'dotenv';
 
 dotenv.config();
