@@ -27,6 +27,8 @@ model Ticket{
   priority Priority @default(MEDIUM)
   userId Int
   user User @relation("UserTickets",fields: [userId],references: [id])
+  assignedAgentId Int
+  assignedAgent User? @relation("AgentTickets",fields: [assignedAgentId])
   createdAt DateTime @default(now())
   updatedAt DateTime
 }
