@@ -15,6 +15,7 @@ model User {
   password   String
   role       Role     @default(USER)
   tickets Ticket[] @relation("UserTickets")
+  assigned Ticket [] @relation("Agent Tickets")
   createdAt  DateTime @default(now())
 }
 
@@ -35,6 +36,8 @@ model Department{
   name String @unique
   tickets Ticket[]
 }
+
+
 
 enum Role {
   USER
