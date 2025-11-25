@@ -91,3 +91,34 @@ export const getTicketById = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'server error' });
   }
 };
+
+export const updateTicket = async (req: AuthRequest, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, description, status, priority, assignedAgentId } = req.body;
+    const ticket = await prisma.ticket.findUnique({
+      where: { id: Number(id) },
+    });
+    if (!ticket) {
+      return res.status(404).json({ message: 'Not found' });
+    }
+    if (req.user.role === 'USER' && ticket.userId !== req.user.id) {
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+    if (req.user.role === 'AGENT') {
+      const updated = await prisma.ticket.update({
+        where: { id: Number(id) },
+        data: { status, priority },
+      });
+      return res.status(200).json({ message: 'Ticket Updated', ticket: updated });
+    }
+    const updated = await prisma.ticket.update({
+      where: { id: Number(id) },
+      data: { title, description, status, priority, assignedAgentId },
+    });
+    res.status(200).json({ message: 'Ticket Updated', ticket: updated });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'server error' });
+  }
+};
