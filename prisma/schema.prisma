@@ -14,11 +14,38 @@ model User {
   email      String   @unique
   password   String
   role       Role     @default(USER)
+  tickets Ticket[] @relation("UserTickets")
   createdAt  DateTime @default(now())
+}
+
+model Ticket{
+  id Int @default(autoincrement())
+  title String
+  description String
+  status Status @default(OPEN)
+  priority Priority @default(MEDIUM)
+  userId Int
+  user User @relation("UserTickets",fields: [userId],references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime
 }
 
 enum Role {
   USER
   AGENT
   ADMIN
+}
+
+enum Status{
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum Priority{
+  LOW
+  MEDIUM 
+  HIGH
+  URGENT
 }
