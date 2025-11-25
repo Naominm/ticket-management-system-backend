@@ -51,6 +51,14 @@ model Comment{
   createdAt DateTime @default(now())
 }
 
+model Attachment{
+  id Int @default(autoincrement())
+  filename String
+  url String
+  ticketId Int
+  ticket Ticket @relation(fields: [ticketId],references: [id])
+  uploadedAt DateTime @default(now())
+}
 
 enum Role {
   USER
