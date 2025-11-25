@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { prisma } from '../prisma';
 import { AuthRequest } from '../middlewares/authmiddleware';
 import { Priority } from '@prisma/client';
+import { Ticket } from '@prisma/client';
 
 type ticketBody = {
   title: string;
@@ -37,7 +38,31 @@ export const createTicket = async (req: AuthRequest, res: Response) => {
 
 export const getTickets = async (req: AuthRequest, res: Response) => {
   try {
-    let tickets;
+    let tickets = [];
+    if (req.user.role === 'ADMIN') {
+      tickets = await prisma.ticket.findMany({
+        include: { user: true, assignedAgent: true, department: true },
+      });
+    } else if (req.user.role === 'AGENT') {
+      tickets = await prisma.ticket.findMany({
+        where: { assignedAgentId: req.user.id },
+        include: { user: true, assignedAgent: true, department: true },
+      });
+    } else {
+      tickets = await prisma.ticket.findMany({
+        where: { userId: req.user.id },
+        include: { user: true, assignedAgent: true, department: true },
+      });
+    }
+    res.status(200).json({ tickets });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const getTicketById = async (req: AuthRequest, res: Response) => {
+  try {
     const { id } = req.params;
     const ticket = await prisma.ticket.findUnique({
       where: { id: Number(id) },
