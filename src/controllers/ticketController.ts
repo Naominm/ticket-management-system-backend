@@ -122,3 +122,23 @@ export const updateTicket = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'server error' });
   }
 };
+
+export const deleteTicket = async (req: AuthRequest, res: Response) => {
+  try {
+    if (req.user.role !== 'ADMIN') {
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+    const { id } = req.params;
+    const ticket = await prisma.ticket.findUnique({ where: { id: Number(id) } });
+    if (!ticket) {
+      return res.status(404).json({ message: 'Ticket not found' });
+    }
+    await prisma.ticket.delete({
+      where: { id: Number(id) },
+    });
+    res.status(200).json({ message: 'Ticket deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'server error' });
+  }
+};
