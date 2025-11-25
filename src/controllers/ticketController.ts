@@ -26,12 +26,13 @@ export const createTicket = async (req: AuthRequest, res: Response) => {
         priority: priority || 'MEDIUM',
         departmentId,
         userId,
-        assignedAgentId: userId,
+        assignedAgentId: req.user.role === 'AGENT' ? userId : null,
         updatedAt: new Date(),
       },
     });
     res.status(201).json({ message: 'Ticket created Successfully', ticket });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: 'server error' });
   }
 };
