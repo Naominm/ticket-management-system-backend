@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { prisma } from '../prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { Role } from '@prisma/client';
 
 type signupBody = {
   firstName: string;
@@ -45,6 +44,7 @@ export const Login = async (req: Request, res: Response) => {
 
     if (!user) {
       res.status(401).json({ message: 'Wrong login credentials' });
+      return;
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
