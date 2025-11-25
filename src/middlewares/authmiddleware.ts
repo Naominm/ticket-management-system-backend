@@ -13,16 +13,18 @@ export interface AuthRequest extends Request {
 
 export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization || req.cookies.ticketMvp;
-    if (!authHeader) {
+    const headerToken = req.headers.authorization;
+    const cookieToken = req.cookies?.token;
+
+    if (!headerToken && !cookieToken) {
       return res.status(401).json({ message: 'No token, authorization denied' });
     }
 
     let token = '';
-    if (authHeader.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
+    if (headerToken && headerToken.startsWith('Bearer ')) {
+      token = headerToken.split(' ')[1];
     } else {
-      token = authHeader as string;
+      token = cookieToken;
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
