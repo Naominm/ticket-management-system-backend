@@ -8,55 +8,58 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  firstName  String
-  lastName   String
-  email      String   @unique
-  password   String
-  role       Role     @default(USER)
-  tickets Ticket[] @relation("UserTickets")
-  assigned Ticket [] @relation("Agent Tickets")
-  createdAt  DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String    @unique
+  password  String
+  role      Role      @default(USER)
+  tickets   Ticket[]  @relation("UserTickets")
+  assigned  Ticket[]  @relation("AgentTickets")
+  createdAt DateTime  @default(now())
+  Comment   Comment[]
 }
 
-model Ticket{
-  id Int @default(autoincrement())
-  title String
-  description String
-  status Status @default(OPEN)
-  priority Priority @default(MEDIUM)
-  userId Int
-  user User @relation("UserTickets",fields: [userId],references: [id])
-  assignedAgentId Int
-  assignedAgent User? @relation("AgentTickets",fields: [assignedAgentId])
-  departmentId Int
-  department Department @relation(fields: [departmentId],references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime
+model Ticket {
+  id              Int          @id @default(autoincrement())
+  title           String
+  description     String
+  status          Status       @default(OPEN)
+  priority        Priority     @default(MEDIUM)
+  userId          Int
+  user            User         @relation("UserTickets", fields: [userId], references: [id])
+  assignedAgentId Int?
+  assignedAgent   User?        @relation("AgentTickets", fields: [assignedAgentId], references: [id])
+  departmentId    Int
+  department      Department   @relation(fields: [departmentId], references: [id])
+  comments        Comment[]
+  attachments     Attachment[]
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime
 }
 
-model Department{
-  id Int @default(autoincrement())
-  name String @unique
+model Department {
+  id      Int      @id @default(autoincrement())
+  name    String   @unique
   tickets Ticket[]
 }
 
-model Comment{
-  id Int @default(autoincrement())
-  content String
-  ticketId Int
-  ticket Ticket @relation(fields: [ticketId],references: [id])
-  userId Int
-  user User @relation(fields: [userId],references: [id])
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  ticketId  Int
+  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
 }
 
-model Attachment{
-  id Int @default(autoincrement())
-  filename String
-  url String
-  ticketId Int
-  ticket Ticket @relation(fields: [ticketId],references: [id])
+model Attachment {
+  id         Int      @id @default(autoincrement())
+  filename   String
+  url        String
+  ticketId   Int
+  ticket     Ticket   @relation(fields: [ticketId], references: [id])
   uploadedAt DateTime @default(now())
 }
 
@@ -66,16 +69,16 @@ enum Role {
   ADMIN
 }
 
-enum Status{
+enum Status {
   OPEN
   IN_PROGRESS
   RESOLVED
   CLOSED
 }
 
-enum Priority{
+enum Priority {
   LOW
-  MEDIUM 
+  MEDIUM
   HIGH
   URGENT
 }
