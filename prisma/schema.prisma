@@ -44,6 +44,8 @@ model Department{
 model Comment{
   id Int @default(autoincrement())
   content String
+  ticketId Int
+  ticket Ticket @relation(fields: [ticketId],references: [id])
 createdAt DateTime @default(now())
 }
 
