@@ -30,6 +30,12 @@ model Ticket{
   updatedAt DateTime
 }
 
+model Department{
+  id Int @default(autoincrement())
+  name String @unique
+  tickets Ticket[]
+}
+
 enum Role {
   USER
   AGENT
