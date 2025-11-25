@@ -46,7 +46,9 @@ model Comment{
   content String
   ticketId Int
   ticket Ticket @relation(fields: [ticketId],references: [id])
-createdAt DateTime @default(now())
+  userId Int
+  user User @relation(fields: [userId],references: [id])
+  createdAt DateTime @default(now())
 }
 
 
