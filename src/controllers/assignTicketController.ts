@@ -17,9 +17,12 @@ export const AssignTicket = async (req: AuthRequest, res: Response) => {
     });
     if (!ticket) return res.status(404).json({ message: 'Ticket Not found' });
 
-    const targetAgent = await prisma.ticket.findUnique({
+    const targetAgent = await prisma.user.findUnique({
       where: { id: agentId },
     });
+    if (!targetAgent) return res.status(404).json({ message: 'User Agent not found' });
+    if (targetAgent.role !== 'AGENT')
+      return res.status(404).json({ message: 'User is not an Agent' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong Server error', err });
