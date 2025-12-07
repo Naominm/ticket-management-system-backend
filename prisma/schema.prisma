@@ -14,6 +14,8 @@ model User {
   email     String    @unique
   password  String
   role      Role      @default(USER)
+  departmentId Int?
+  department Department? @relation(fields: [departmentId],references: [id])
   tickets   Ticket[]  @relation("UserTickets")
   assigned  Ticket[]  @relation("AgentTickets")
   createdAt DateTime  @default(now())
@@ -41,6 +43,7 @@ model Ticket {
 model Department {
   id      Int      @id @default(autoincrement())
   name    String   @unique
+  users User[]
   tickets Ticket[]
 }
 
