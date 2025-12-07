@@ -1,7 +1,8 @@
 import { AuthRequest } from '../middlewares/authmiddleware';
 import { Response } from 'express';
+import { prisma } from '../prisma';
 
-export const AssignTicket = (req: AuthRequest, res: Response) => {
+export const AssignTicket = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
     const { agentId } = req.body;
@@ -9,6 +10,12 @@ export const AssignTicket = (req: AuthRequest, res: Response) => {
     if (req.user.role !== 'AGENT' && req.user.role !== 'ADMIN') {
       return res.status(403).json({ message: 'Only Admins and agents can reassign tickets' });
     }
+
+    const ticket = await prisma.ticket.findUnique({
+      where: { id: Number(id) },
+      include: { department: true },
+    });
+    if (!ticket) return res.status(404).json({ message: 'Ticket Not found' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong Server error', err });
