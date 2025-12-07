@@ -28,6 +28,12 @@ export const AssignTicket = async (req: AuthRequest, res: Response) => {
         message: `Agent does not belong to the ${ticket.department.name} department`,
       });
     }
+
+    const updatedTicket = await prisma.ticket.update({
+      where: { id: Number(id) },
+      data: { assignedAgentId: agentId },
+    });
+    res.status(200).json({ message: 'Ticket successfully reassigned', ticket: updatedTicket });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong Server error', err });
