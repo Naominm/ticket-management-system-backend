@@ -23,6 +23,11 @@ export const AssignTicket = async (req: AuthRequest, res: Response) => {
     if (!targetAgent) return res.status(404).json({ message: 'User Agent not found' });
     if (targetAgent.role !== 'AGENT')
       return res.status(404).json({ message: 'User is not an Agent' });
+    if (targetAgent.departmentId !== ticket.departmentId) {
+      return res.status(403).json({
+        message: `Agent does not belong to the ${ticket.department.name} department`,
+      });
+    }
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong Server error', err });
