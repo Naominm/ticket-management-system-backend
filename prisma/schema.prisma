@@ -8,18 +8,18 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  firstName String
-  lastName  String
-  email     String    @unique
-  password  String
-  role      Role      @default(USER)
+  id           Int         @id @default(autoincrement())
+  firstName    String
+  lastName     String
+  email        String      @unique
+  password     String
+  role         Role        @default(USER)
   departmentId Int?
-  department Department? @relation(fields: [departmentId],references: [id])
-  tickets   Ticket[]  @relation("UserTickets")
-  assigned  Ticket[]  @relation("AgentTickets")
-  createdAt DateTime  @default(now())
-  Comment   Comment[]
+  department   Department? @relation(fields: [departmentId], references: [id])
+  tickets      Ticket[]    @relation("UserTickets")
+  assigned     Ticket[]    @relation("AgentTickets")
+  createdAt    DateTime    @default(now())
+  Comment      Comment[]
 }
 
 model Ticket {
@@ -37,24 +37,25 @@ model Ticket {
   comments        Comment[]
   attachments     Attachment[]
   createdAt       DateTime     @default(now())
-  updatedAt       DateTime @updatedAt
+  updatedAt       DateTime     @updatedAt
 }
 
 model Department {
   id      Int      @id @default(autoincrement())
   name    String   @unique
-  users User[]
+  users   User[]
   tickets Ticket[]
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   content   String
+  type      CommentType @default(NOTE)
   ticketId  Int
-  ticket    Ticket   @relation(fields: [ticketId], references: [id])
+  ticket    Ticket      @relation(fields: [ticketId], references: [id])
   userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  user      User        @relation(fields: [userId], references: [id])
+  createdAt DateTime    @default(now())
 }
 
 model Attachment {
@@ -84,4 +85,13 @@ enum Priority {
   MEDIUM
   HIGH
   URGENT
+}
+
+enum CommentType {
+  NOTE
+  ASSIGNMENT
+  REASSIGNMENT
+  STATUS_UPDATE
+  PRIORITY_UPDATE
+  CREATED
 }

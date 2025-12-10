@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "CommentType" AS ENUM ('NOTE', 'ASSIGNMENT', 'REASSIGNMENT', 'STATUS_UPDATE', 'PRIORITY_UPDATE', 'CREATED');
+
+-- AlterTable
+ALTER TABLE "Comment" ADD COLUMN     "type" "CommentType" NOT NULL DEFAULT 'NOTE';
