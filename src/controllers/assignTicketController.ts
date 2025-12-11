@@ -5,7 +5,7 @@ import { prisma } from '../prisma';
 export const AssignTicket = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { agentId,comment } = req.body;
+    const { agentId, comment } = req.body;
 
     if (req.user.role !== 'AGENT' && req.user.role !== 'ADMIN') {
       return res.status(403).json({ message: 'Only Admins and agents can reassign tickets' });
@@ -31,7 +31,7 @@ export const AssignTicket = async (req: AuthRequest, res: Response) => {
 
     const updatedTicket = await prisma.ticket.update({
       where: { id: Number(id) },
-      data: { assignedAgentId: agentId },
+      data: { assignedAgentId: agentId, updatedAt: new Date() },
     });
     res.status(200).json({ message: 'Ticket successfully reassigned', ticket: updatedTicket });
   } catch (err) {
