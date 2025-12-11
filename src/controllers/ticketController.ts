@@ -2,18 +2,18 @@ import { Response } from 'express';
 import { prisma } from '../prisma';
 import { AuthRequest } from '../middlewares/authmiddleware';
 import { Priority } from '@prisma/client';
-import { Ticket } from '@prisma/client';
 
 type ticketBody = {
   title: string;
   description: string;
   priority?: Priority;
   departmentId: number;
+  comment?: string;
 };
 
 export const createTicket = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, priority, departmentId } = req.body as ticketBody;
+    const { title, description, priority, departmentId, comment } = req.body as ticketBody;
     const userId = req.user.id;
     if (!title || !description || !departmentId) {
       return res.status(400).json({ message: 'Missing required fields' });
@@ -30,7 +30,21 @@ export const createTicket = async (req: AuthRequest, res: Response) => {
         updatedAt: new Date(),
       },
     });
-    res.status(201).json({ message: 'Ticket created Successfully', ticket });
+    let savedComment = null;
+    if (comment && comment.trim() !== '') {
+      savedComment = await prisma.comment.create({
+        data: {
+          content: comment,
+          userId: req.user.id,
+          ticketId: ticket.id,
+        },
+      });
+    }
+    res.status(201).json({
+      message: 'Ticket created Successfully',
+      ticket,
+      comment: savedComment,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'server error' });
