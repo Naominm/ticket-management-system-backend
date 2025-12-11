@@ -135,7 +135,9 @@ export const updateTicket = async (req: AuthRequest, res: Response) => {
           },
         });
       }
-      return res.status(200).json({ message: 'Ticket Updated', ticket: updated });
+      return res
+        .status(200)
+        .json({ message: 'Ticket Updated', ticket: updated, comment: savedComment });
     }
     const updated = await prisma.ticket.update({
       where: { id: Number(id) },
