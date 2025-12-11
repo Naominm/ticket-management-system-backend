@@ -33,7 +33,23 @@ export const AssignTicket = async (req: AuthRequest, res: Response) => {
       where: { id: Number(id) },
       data: { assignedAgentId: agentId, updatedAt: new Date() },
     });
-    res.status(200).json({ message: 'Ticket successfully reassigned', ticket: updatedTicket });
+    let savedComment = null;
+    if (comment && comment.trim() !== '') {
+      savedComment = await prisma.comment.create({
+        data: {
+          content: comment,
+          userId: req.user.id,
+          ticketId: updatedTicket.id,
+        },
+      });
+    }
+    res
+      .status(200)
+      .json({
+        message: 'Ticket successfully reassigned',
+        ticket: updatedTicket,
+        comment: savedComment,
+      });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong Server error', err });
