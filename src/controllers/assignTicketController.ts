@@ -5,7 +5,7 @@ import { prisma } from '../prisma';
 export const AssignTicket = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { agentId } = req.body;
+    const { agentId,comment } = req.body;
 
     if (req.user.role !== 'AGENT' && req.user.role !== 'ADMIN') {
       return res.status(403).json({ message: 'Only Admins and agents can reassign tickets' });
