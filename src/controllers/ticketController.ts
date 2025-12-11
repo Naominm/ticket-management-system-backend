@@ -110,7 +110,7 @@ export const getTicketById = async (req: AuthRequest, res: Response) => {
 export const updateTicket = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, description, status, priority, assignedAgentId } = req.body;
+    const { title, description, status, priority, assignedAgentId, comment } = req.body;
     const ticket = await prisma.ticket.findUnique({
       where: { id: Number(id) },
     });
@@ -125,6 +125,16 @@ export const updateTicket = async (req: AuthRequest, res: Response) => {
         where: { id: Number(id) },
         data: { status, priority },
       });
+      let savedComment = null;
+      if (comment && comment.trim() !== '') {
+        savedComment = await prisma.comment.create({
+          data: {
+            content: comment,
+            userId: req.user.id,
+            ticketId: ticket.id,
+          },
+        });
+      }
       return res.status(200).json({ message: 'Ticket Updated', ticket: updated });
     }
     const updated = await prisma.ticket.update({
