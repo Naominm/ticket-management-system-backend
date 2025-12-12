@@ -43,13 +43,11 @@ export const AssignTicket = async (req: AuthRequest, res: Response) => {
         },
       });
     }
-    res
-      .status(200)
-      .json({
-        message: 'Ticket successfully reassigned',
-        ticket: updatedTicket,
-        comment: savedComment,
-      });
+    res.status(200).json({
+      message: 'Ticket successfully reassigned',
+      ticket: updatedTicket,
+      comment: savedComment,
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Something went wrong Server error', err });

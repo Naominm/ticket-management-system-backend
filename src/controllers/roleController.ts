@@ -9,11 +9,14 @@ export const updateRole = async (req: AuthRequest, res: Response) => {
     }
 
     const { id } = req.params;
-    const { role } = req.body;
+    const { role, departmentId } = req.body;
 
     if (!['USER', 'AGENT', 'ADMIN'].includes(role)) {
       return res.status(400).json({ message: 'Invalid role' });
     }
+
+    const updates: any = {};
+    if (role) updates.role = role;
 
     const user = await prisma.user.update({
       where: { id: Number(id) },
