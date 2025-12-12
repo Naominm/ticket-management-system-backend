@@ -18,6 +18,12 @@ export const updateRole = async (req: AuthRequest, res: Response) => {
     const updates: any = {};
     if (role) updates.role = role;
 
+    if (role === 'AGENT') {
+      if (!departmentId) {
+        return res.status(400).json({ message: 'Agent must belong to a department' });
+      }
+    }
+
     const user = await prisma.user.update({
       where: { id: Number(id) },
       data: { role },
