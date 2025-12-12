@@ -169,3 +169,19 @@ export const deleteTicket = async (req: AuthRequest, res: Response) => {
     res.status(500).json({ message: 'server error' });
   }
 };
+
+export const getAssignedToAgent = async (req: AuthRequest, res: Response) => {
+  try {
+    const { agentId } = req.params;
+    const tickets = await prisma.ticket.findMany({
+      where: { assignedAgentId: Number(agentId) },
+      include: { user: true, assignedAgent: true, department: true },
+    });
+    return res.status(200).json({
+      message: 'Tickets assigned to agent',
+      tickets,
+    });
+  } catch (err) {
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
