@@ -3,6 +3,7 @@ import { prisma } from '../prisma';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthRequest } from '../middlewares/authmiddleware';
+import { Role } from '@prisma/client';
 type signupBody = {
   firstName: string;
   lastName: string;
@@ -67,7 +68,7 @@ export const Login = async (req: Request, res: Response) => {
       return;
     }
 
-    const JwtPayload = { id: user.id, name: user.firstName };
+    const JwtPayload = { id: user.id, name: user.firstName, Role: user.role };
     const token = jwt.sign(JwtPayload, process.env.JWT_SECRET as string);
     res.cookie('ticketMvp', token, { secure: false }).status(200).json({
       token,

@@ -14,7 +14,7 @@ export interface AuthRequest extends Request {
 export const authMiddleware = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const headerToken = req.headers.authorization;
-    const cookieToken = req.cookies?.token;
+    const cookieToken = req.cookies?.ticketMvp;
 
     if (!headerToken && !cookieToken) {
       return res.status(401).json({ message: 'No token, authorization denied' });
