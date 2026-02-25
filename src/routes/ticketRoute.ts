@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { AssignTicket, getAssignedToAgent } from '../controllers/assignTicketController';
 import { deleteTicket } from '../controllers/ticketController';
 import { getMostActiveEmployees } from '../controllers/getMostActiveEmployee';
+import { getMostActiveDepartments } from '../controllers/getMostDepartmentActive';
 import { authMiddleware } from '../middlewares/authmiddleware';
 import { roleMiddleware } from '../middlewares/roleMiddleware';
 import { Role } from '@prisma/client';
@@ -20,7 +21,13 @@ router.get(
   roleMiddleware(Role.ADMIN),
   getMostActiveEmployees,
 );
+router.get(
+  '/most-active-departments',
+  authMiddleware,
+  roleMiddleware(Role.ADMIN),
+  getMostActiveDepartments,
+);
 
-router.delete('/:id', authMiddleware, roleMiddleware(Role.ADMIN), deleteTicket);
+router.delete('/delete/:id', authMiddleware, roleMiddleware(Role.ADMIN), deleteTicket);
 
 export default router;

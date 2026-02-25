@@ -78,9 +78,14 @@ export const getTickets = async (req: AuthRequest, res: Response) => {
 
 export const getTicketById = async (req: AuthRequest, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = Number(req.params.id);
+
+    if (!id || isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid ticket ID' });
+    }
+
     const ticket = await prisma.ticket.findUnique({
-      where: { id: Number(id) },
+      where: { id },
       include: {
         user: true,
         assignedAgent: true,
@@ -91,22 +96,23 @@ export const getTicketById = async (req: AuthRequest, res: Response) => {
     });
 
     if (!ticket) {
-      return res.status(400).json({ message: 'No ticket found' });
+      return res.status(404).json({ message: 'No ticket found' });
     }
 
     if (req.user.role === 'USER' && ticket.userId !== req.user.id) {
       return res.status(403).json({ message: 'Access Denied' });
     }
+
     if (req.user.role === 'AGENT' && ticket.assignedAgentId !== req.user.id) {
-      return res.status(403).json({ message: 'Access denied' });
+      return res.status(403).json({ message: 'Access Denied' });
     }
+
     res.status(200).json({ ticket });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: 'server error' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
-
 export const updateTicket = async (req: AuthRequest, res: Response) => {
   try {
     const { id } = req.params;
@@ -114,7 +120,6 @@ export const updateTicket = async (req: AuthRequest, res: Response) => {
 
     const ticket = await prisma.ticket.findUnique({ where: { id: Number(id) } });
     if (!ticket) return res.status(404).json({ message: 'Ticket not found' });
-    
     if (req.user.role === 'USER') {
       if (ticket.userId !== req.user.id) return res.status(403).json({ message: 'Access Denied' });
 
