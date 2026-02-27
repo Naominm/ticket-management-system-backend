@@ -33,7 +33,8 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const { firstName, lastName, email, password, departmentId } = req.body;
+    const { firstName, lastName, email, password, departmentId, jobTitle, bio, phone, Position } =
+      req.body;
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
@@ -42,6 +43,10 @@ export const updateProfile = async (req: AuthRequest, res: Response) => {
         lastName,
         email,
         departmentId,
+        jobTitle,
+        bio,
+        phone,
+        Position,
         ...(password && { password }),
       },
     });
