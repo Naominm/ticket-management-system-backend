@@ -19,6 +19,7 @@ model User {
   Position     String?
   bio          String?
   departmentId Int?
+  avatarUrl    String?
   department   Department? @relation(fields: [departmentId], references: [id])
   tickets      Ticket[]    @relation("UserTickets")
   assigned     Ticket[]    @relation("AgentTickets")
