@@ -14,6 +14,10 @@ model User {
   email        String      @unique
   password     String
   role         Role        @default(USER)
+  phone        String?
+  jobTitle     String?
+  Position     String?
+  bio          String?
   departmentId Int?
   department   Department? @relation(fields: [departmentId], references: [id])
   tickets      Ticket[]    @relation("UserTickets")
