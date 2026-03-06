@@ -7,18 +7,21 @@ export const AssignTicket = async (req: AuthRequest, res: Response) => {
     const { id } = req.params;
     const { agentId, comment } = req.body;
 
+    const ticketId = Number(id);
+    const numericAgentId = Number(agentId);
+
     if (req.user.role !== 'AGENT' && req.user.role !== 'ADMIN') {
       return res.status(403).json({ message: 'Only Admins and agents can reassign tickets' });
     }
 
     const ticket = await prisma.ticket.findUnique({
-      where: { id: Number(id) },
+      where: { id: ticketId },
       include: { department: true },
     });
     if (!ticket) return res.status(404).json({ message: 'Ticket Not found' });
 
     const targetAgent = await prisma.user.findUnique({
-      where: { id: agentId },
+      where: { id: numericAgentId },
     });
     if (!targetAgent) return res.status(404).json({ message: 'User Agent not found' });
     if (targetAgent.role !== 'AGENT')
@@ -57,8 +60,9 @@ export const AssignTicket = async (req: AuthRequest, res: Response) => {
 export const getAssignedToAgent = async (req: AuthRequest, res: Response) => {
   try {
     const { agentId } = req.params;
+    const numericAgentId = Number(agentId);
     const tickets = await prisma.ticket.findMany({
-      where: { assignedAgentId: Number(agentId) },
+      where: { assignedAgentId: numericAgentId },
       include: { user: true, assignedAgent: true, department: true },
     });
     return res.status(200).json({

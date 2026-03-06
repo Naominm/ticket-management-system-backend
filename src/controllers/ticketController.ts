@@ -133,7 +133,11 @@ export const updateTicket = async (req: AuthRequest, res: Response) => {
     if (req.user.role === 'AGENT') {
       const updated = await prisma.ticket.update({
         where: { id: Number(id) },
-        data: { status, priority },
+        data: {
+          status,
+          priority,
+          ...(assignedAgentId ? { assignedAgentId } : {}),
+        },
       });
 
       let savedComment = null;
