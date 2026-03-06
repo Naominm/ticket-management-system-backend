@@ -10,6 +10,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
+  "prisma": {
+    "seed": "tsx src/seedDepartments.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -17,6 +20,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.0.0",
     "@prisma/client": "^5.13.0",
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cloudinary": "^2.9.0",
     "cookie-parser": "^1.4.7",
@@ -30,7 +34,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.11.0",
     "concurrently": "^9.2.1",
     "nodemon": "^3.1.11",
     "prettier": "^3.6.2",

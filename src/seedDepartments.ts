@@ -1,14 +1,33 @@
-import { prisma } from './prisma';
+import { PrismaClient } from '@prisma/client';
 
-async function seedDepartments() {
-  await prisma.department.createMany({
-    data: [{ name: 'IT' }, { name: 'Finance' }, { name: 'Human Resource' }],
-    skipDuplicates: true,
-  });
+const prisma = new PrismaClient();
+
+async function main() {
+  const departments = [
+    { name: 'IT Support' },
+    { name: 'Network' },
+    { name: 'Hardware' },
+    { name: 'Software' },
+    { name: 'Finance' },
+    { name: 'HR' },
+  ];
+
+  for (const dept of departments) {
+    await prisma.department.upsert({
+      where: { name: dept.name },
+      update: {},
+      create: dept,
+    });
+  }
 
   console.log('Departments seeded successfully');
 }
 
-seedDepartments()
-  .catch(console.error)
-  .finally(() => prisma.$disconnect());
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

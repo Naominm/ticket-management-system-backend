@@ -6,7 +6,11 @@ export const getMostActiveDepartments = async (req: Request, res: Response) => {
     const grouped = await prisma.ticket.groupBy({
       by: ['departmentId'],
       _count: { id: true },
-      where: { status: 'RESOLVED' },
+      where: {
+        status: {
+          in: ['RESOLVED', 'CLOSED'],
+        },
+      },
     });
 
     const groupedNonNull = grouped.filter((g) => g.departmentId !== null);

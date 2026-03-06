@@ -21,19 +21,26 @@ export const Signup = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Email already exist' });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
-    let userRole: 'USER' | 'AGENT' | 'ADMIN' = 'USER';
+    // let userRole: 'USER' | 'AGENT' | 'ADMIN' = 'USER';
     const totalUsers = await prisma.user.count();
+    let userRole: Role;
+
     if (totalUsers === 0) {
       userRole = 'ADMIN';
-    } else if (role && role !== 'USER') {
-      const authReq = req as AuthRequest;
-
-      if (!authReq.user || authReq.user.role !== 'ADMIN') {
-        return res.status(403).json({ message: 'Only Admin can assign this role' });
-      }
-
-      userRole = role;
+    } else {
+      userRole = 'AGENT';
     }
+    // if (totalUsers === 0) {
+    //   userRole = 'ADMIN';
+    // } else if (role && role !== 'USER') {
+    //   const authReq = req as AuthRequest;
+
+    //   if (!authReq.user || authReq.user.role !== 'ADMIN') {
+    //     return res.status(403).json({ message: 'Only Admin can assign this role' });
+    //   }
+
+    //   userRole = role;
+    // }
     const user = await prisma.user.create({
       data: {
         firstName,
