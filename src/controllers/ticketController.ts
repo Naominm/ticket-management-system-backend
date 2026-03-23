@@ -8,16 +8,23 @@ type ticketBody = {
   description: string;
   priority?: Priority;
   departmentId: number;
+  assignedAgentId?: number;
   comment?: string;
 };
 
 export const createTicket = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, description, priority, departmentId, comment } = req.body as ticketBody;
+    const { title, description, priority, departmentId, comment, assignedAgentId } =
+      req.body as ticketBody;
     const userId = req.user.id;
     if (!title || !description || !departmentId) {
       return res.status(400).json({ message: 'Missing required fields' });
     }
+    const resolvedAgentId = assignedAgentId
+      ? assignedAgentId
+      : req.user.role === 'AGENT'
+        ? userId
+        : null;
 
     const ticket = await prisma.ticket.create({
       data: {
@@ -26,7 +33,7 @@ export const createTicket = async (req: AuthRequest, res: Response) => {
         priority: priority || 'MEDIUM',
         departmentId,
         userId,
-        assignedAgentId: req.user.role === 'AGENT' ? userId : null,
+        assignedAgentId: resolvedAgentId,
         updatedAt: new Date(),
       },
     });

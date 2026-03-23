@@ -36,6 +36,7 @@ export const getMostActiveEmployees = async (req: Request, res: Response) => {
         id: true,
         firstName: true,
         lastName: true,
+        avatarUrl: true,
       },
     });
     const response = agents.map((agent) => {
@@ -47,6 +48,7 @@ export const getMostActiveEmployees = async (req: Request, res: Response) => {
         employeeName: `${agent.firstName} ${agent.lastName}`,
         totalTickets: data.total,
         resolvedTickets: data.resolved,
+        avatarUrl: agent.avatarUrl,
         resolutionRate,
       };
     });
