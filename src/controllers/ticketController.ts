@@ -92,13 +92,37 @@ export const getTicketById = async (req: AuthRequest, res: Response) => {
     }
 
     const ticket = await prisma.ticket.findUnique({
-      where: { id },
+      where: { id: Number(req.params.id) },
       include: {
-        user: true,
-        assignedAgent: true,
-        department: true,
-        comments: true,
-        attachments: true,
+        comments: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+        assignedAgent: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
       },
     });
 
@@ -163,6 +187,16 @@ export const updateTicket = async (req: AuthRequest, res: Response) => {
           content: comment.trim(),
           userId: req.user.id,
           ticketId,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              lastName: true,
+              firstName: true,
+              email: true,
+            },
+          },
         },
       });
     }
