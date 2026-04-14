@@ -1,7 +1,7 @@
 import express from 'express';
-import { getAllDepartments, getDepartmentById } from '../controllers/DepartmentController';
-import { getUsersByDepartment } from '../controllers/UserController';
-import { authMiddleware } from '../middlewares/authmiddleware';
+import { getAllDepartments, getDepartmentById } from '../controllers/DepartmentController.js';
+import { getUsersByDepartment } from '../controllers/UserController.js';
+import { authMiddleware } from '../middlewares/authmiddleware.js';
 
 const router = express.Router();
 

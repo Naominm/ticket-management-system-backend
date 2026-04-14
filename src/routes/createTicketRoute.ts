@@ -5,8 +5,8 @@ import {
   getTickets,
   updateTicket,
   deleteTicket,
-} from '../controllers/ticketController';
-import { authMiddleware } from '../middlewares/authmiddleware';
+} from '../controllers/ticketController.js';
+import { authMiddleware } from '../middlewares/authmiddleware.js';
 
 const router = Router();
 router.post('/', authMiddleware, createTicket);

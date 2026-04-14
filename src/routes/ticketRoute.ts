@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { AssignTicket, getAssignedToAgent } from '../controllers/assignTicketController';
-import { deleteTicket } from '../controllers/ticketController';
-import { getMostActiveEmployees } from '../controllers/getMostActiveEmployee';
-import { getMostActiveDepartments } from '../controllers/getMostDepartmentActive';
-import { getDepartmentMonthlyPerformance } from '../controllers/DepartmentMonthlyPerfomance';
-import { authMiddleware } from '../middlewares/authmiddleware';
-import { roleMiddleware } from '../middlewares/roleMiddleware';
+import { AssignTicket, getAssignedToAgent } from '../controllers/assignTicketController.js';
+import { deleteTicket } from '../controllers/ticketController.js';
+import { getMostActiveEmployees } from '../controllers/getMostActiveEmployee.js';
+import { getMostActiveDepartments } from '../controllers/getMostDepartmentActive.js';
+import { getDepartmentMonthlyPerformance } from '../controllers/DepartmentMonthlyPerfomance.js';
+import { authMiddleware } from '../middlewares/authmiddleware.js';
+import { roleMiddleware } from '../middlewares/roleMiddleware.js';
 import { Role } from '@prisma/client';
 
 const router = Router();

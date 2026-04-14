@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getEmployeeGrowth } from '../controllers/employeeGrowthRate';
+import { getEmployeeGrowth } from '../controllers/employeeGrowthRate.js';
 
 const router = Router();
 
