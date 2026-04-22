@@ -63,6 +63,9 @@ export const getTickets = async (req: AuthRequest, res: Response) => {
     let tickets = [];
     if (req.user.role === 'ADMIN') {
       tickets = await prisma.ticket.findMany({
+        orderBy: {
+          createdAt: 'desc',
+        },
         include: { user: true, assignedAgent: true, department: true },
       });
     } else if (req.user.role === 'AGENT') {
