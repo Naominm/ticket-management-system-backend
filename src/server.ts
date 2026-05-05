@@ -16,7 +16,7 @@ const port = process.env.PORT || 5000;
 app.use(
   cors({
     origin: 'https://ticket-management-system-fron-git-c7119d-naomi-mbuguas-projects.vercel.app',
-    credentials: false,
+    credentials: true,
   }),
 );
 
