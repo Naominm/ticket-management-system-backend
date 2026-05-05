@@ -114,6 +114,34 @@ export const CreateUser = async (req: Request, res: Response) => {
     return res.status(500).json({ message: 'something went wrong', err });
   }
 };
+
+export const GetAllUsers = async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthRequest;
+    if (!authReq.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    if (authReq.user.role !== 'ADMIN') {
+      return res.status(403).json({ message: 'Forbidden.Only Admin can view users' });
+    }
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        jobTitle: true,
+        department: { select: { id: true, name: true } },
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    return res.status(200).json({ users });
+  } catch (err) {
+    return res.status(500).json({ message: 'An error occurred', err });
+  }
+};
 export const Login = async (req: Request, res: Response) => {
   try {
     const { identifier, password }: { identifier: string; password: string } = req.body;
