@@ -13,6 +13,10 @@ type signupBody = {
 };
 export const Signup = async (req: Request, res: Response) => {
   try {
+    const totalUsers = await prisma.user.count();
+    if (totalUsers > 0) {
+      return res.status(403).json({ message: 'Setup already complete.' });
+    }
     const { firstName, lastName, email, password, role } = req.body as signupBody;
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -21,15 +25,7 @@ export const Signup = async (req: Request, res: Response) => {
       return res.status(400).json({ message: 'Email already exist' });
     }
     const hashedPassword = await bcrypt.hash(password, 12);
-    // let userRole: 'USER' | 'AGENT' | 'ADMIN' = 'USER';
-    const totalUsers = await prisma.user.count();
-    let userRole: Role;
 
-    if (totalUsers === 0) {
-      userRole = 'ADMIN';
-    } else {
-      userRole = 'AGENT';
-    }
     // if (totalUsers === 0) {
     //   userRole = 'ADMIN';
     // } else if (role && role !== 'USER') {
@@ -47,7 +43,15 @@ export const Signup = async (req: Request, res: Response) => {
         lastName,
         email,
         password: hashedPassword,
-        role: userRole,
+        role: 'ADMIN',
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        createdAt: true,
       },
     });
     res.status(201).json({ message: 'User created successfully', user });
