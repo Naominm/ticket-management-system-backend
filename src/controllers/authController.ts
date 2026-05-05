@@ -13,7 +13,7 @@ type CreateUserBody = {
   role?: 'USER' | 'AGENT' | 'ADMIN';
   department?: string;
 };
-export const Signup = async (req: Request, res: Response) => {
+export const Setup = async (req: Request, res: Response) => {
   try {
     const totalUsers = await prisma.user.count();
     if (totalUsers > 0) {
@@ -28,17 +28,6 @@ export const Signup = async (req: Request, res: Response) => {
     }
     const hashedPassword = await bcrypt.hash(password, 12);
 
-    // if (totalUsers === 0) {
-    //   userRole = 'ADMIN';
-    // } else if (role && role !== 'USER') {
-    //   const authReq = req as AuthRequest;
-
-    //   if (!authReq.user || authReq.user.role !== 'ADMIN') {
-    //     return res.status(403).json({ message: 'Only Admin can assign this role' });
-    //   }
-
-    //   userRole = role;
-    // }
     const user = await prisma.user.create({
       data: {
         firstName,
