@@ -155,7 +155,7 @@ export const Login = async (req: Request, res: Response) => {
     res.cookie('ticketMvp', token, { secure: false }).status(200).json({
       token,
       name: user.firstName,
-      Role: user.role,
+      role: user.role,
       message: 'User logged in Successfully',
     });
   } catch (err) {
