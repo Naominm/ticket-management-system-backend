@@ -2,6 +2,36 @@ import { Request, Response } from 'express';
 import { prisma } from '../prisma';
 import { AuthRequest } from '../middlewares/authmiddleware';
 
+export const createDepartment = async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthRequest;
+    if (!authReq.user) {
+      return res.status(401).json({ message: 'Unauthorized.' });
+    }
+    if (authReq.user.role !== 'ADMIN') {
+      return res.status(403).json({ message: 'Forbidden.' });
+    }
+
+    const { name } = req.body as { name: string };
+    if (!name?.trim()) {
+      return res.status(400).json({ message: 'Department name is required.' });
+    }
+
+    const existing = await prisma.department.findUnique({ where: { name: name.trim() } });
+    if (existing) {
+      return res.status(400).json({ message: `Department "${name}" already exists.` });
+    }
+
+    const department = await prisma.department.create({
+      data: { name: name.trim() },
+    });
+
+    return res.status(201).json({ message: 'Department created.', department });
+  } catch (error) {
+    return res.status(500).json({ message: 'Failed to create department.' });
+  }
+};
+
 export const getAllDepartments = async (req: Request, res: Response) => {
   try {
     const authReq = req as AuthRequest;
