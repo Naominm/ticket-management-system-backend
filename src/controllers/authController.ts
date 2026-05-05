@@ -4,12 +4,14 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AuthRequest } from '../middlewares/authmiddleware';
 import { Role } from '@prisma/client';
-type signupBody = {
+import { connect } from 'http2';
+type CreateUserBody = {
   firstName: string;
   lastName: string;
   email: string;
   password: string;
   role?: 'USER' | 'AGENT' | 'ADMIN';
+  department?: string;
 };
 export const Signup = async (req: Request, res: Response) => {
   try {
@@ -17,7 +19,7 @@ export const Signup = async (req: Request, res: Response) => {
     if (totalUsers > 0) {
       return res.status(403).json({ message: 'Setup already complete.' });
     }
-    const { firstName, lastName, email, password, role } = req.body as signupBody;
+    const { firstName, lastName, email, password, role } = req.body as CreateUserBody;
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
@@ -60,6 +62,58 @@ export const Signup = async (req: Request, res: Response) => {
   }
 };
 
+export const CreateUser = async (req: Request, res: Response) => {
+  try {
+    const authReq = req as AuthRequest;
+    if (!authReq.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    if (authReq.user.role !== 'ADMIN') {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    const { firstName, lastName, email, password, role, department } = req.body as CreateUserBody;
+    if (!firstName || !lastName || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email already exists' });
+    }
+
+    if (department) {
+      const dept = await prisma.department.findUnique({ where: { name: department } });
+      if (!dept) {
+        return res.status(400).json({ message: `Department "${department}" does not exist` });
+      }
+    }
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = await prisma.user.create({
+      data: {
+        firstName,
+        lastName,
+        email,
+        password: hashedPassword,
+        role: (role as Role) ?? 'AGENT',
+        ...(department && {
+          department: { connect: { name: department } },
+        }),
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        role: true,
+        department: { select: { id: true, name: true } },
+        createdAt: true,
+      },
+    });
+    res.status(201).json({ message: 'User Created Successfully.', user });
+  } catch (err) {
+    return res.status(500).json({ message: 'something went wrong', err });
+  }
+};
 export const Login = async (req: Request, res: Response) => {
   try {
     const { identifier, password }: { identifier: string; password: string } = req.body;
